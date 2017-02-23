@@ -1,0 +1,56 @@
+body{
+    margin: 10px;
+    background: url(fondo.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+table{
+    margin: 20px;
+    border-radius: 6px;
+}
+
+button{
+    color: white;
+    background: black;
+    border-radius: 5px;
+}
+
+/*Division de arriba, tabla de ingreso de datos*/
+#top{
+    position: relative;
+    width: auto;
+}
+
+#top table{
+    background: #67A5DB;
+    margin-left: 40%;
+}
+
+#top table tr td input{
+    background: #C7C8C6;
+}
+
+#top table tr{
+    font-family: Arial;
+    font-size: 20px;
+}
+
+/*Division de abajo, datos registrados*/
+#bottom{
+    position: relative;
+    width: auto;
+    clear: left;
+}
+
+#bottom table{
+    background: #5AFF00;
+    margin-left: 10%;
+    width: 60%;
+}
+
+#bottom table tr td, #bottom table tr th{
+    border: 1px solid #2F8401;
+    font-family: Arial;
+    font-size: 20px;
+}

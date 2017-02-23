@@ -1,0 +1,251 @@
+<html>
+<head>
+    <title>...</title>
+    <link type="text/css" rel="stylesheet" href="st.css"/>
+</head>
+<body id="body">
+
+    <!--DIVISION DE ARRIBA, TABLA DE INGRESO DE DATOS-->
+    <div id="top">
+    <table border=2 id="topTable">
+        <tr>
+            <th>Cedula</th>
+            <td><input type="text" id="iCedula"></input></td>
+        </tr>
+        <tr>
+            <th>Nombre</th>
+            <td><input type="text" id="iNombre"></input></td>
+        </tr>
+        <tr>
+            <th>Apellidos</th>
+            <td><input type="text" id="iApellido"></input></td>
+        </tr>
+        <tr>
+            <th>Telefono</th>
+            <td><input type="text" id="iTelefono"></input></td>
+        </tr>
+        <tr>
+            <td><button type="button" id="bPic" onclick="takePic();">Tomar foto</button></td>
+            <td><button type="button" id="bSave" onclick="save();">Guardar</button></td>
+        </tr>
+    </table>
+    </div>
+
+    <!--DIVISION DE ABAJO, TABLA DE DATOS REGISTRADOS-->
+    <div id="bottom">
+    <table border=1>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Cedula</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Telefono</th>
+        </tr>    
+        </thead>
+        <tbody id="tabla">
+        <!--Aquí deberían aparecer los datos ingresados por el ususario-->
+        </tbody>
+    </table>
+
+        <!--DECLARACIÓN DE LAS ETIQUETAS PARA TOMAR LA FOTO-->
+        <div id="cameraFunctions">
+        <video id="video" width="640" height="480" autoplay></video>
+        <canvas id="canvas"></canvas>
+        </div>
+        
+
+
+    </div>
+
+<script>
+    var allData = [];
+    var img = "fondo.jpg";
+        
+        //Nombramiento de propiedades dentro del arreglo
+    function properties(foto,cedula,nombre,apellido,telefono){
+        this.foto = foto;
+        this.cedula = cedula;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.telefono = telefono;
+    }
+        
+        //Captura de datos
+    function save(){
+            ced = document.getElementById("iCedula").value;
+            name = document.getElementById("iNombre").value;
+            lastName = document.getElementById("iApellido").value;
+            tel = document.getElementById("iTelefono").value;
+                allData.push(new properties(img, ced, name, lastName, tel));
+        showData();
+        lim();
+        
+        //Agregar al Local Storage
+        local = JSON.stringify(allData);
+        localStorage.setItem("datos", local);
+    }
+        
+        //Muestra los elementos (o datos) guardados
+    function showData(){
+        padre = document.getElementById("tabla");
+            for(x=0; x < allData.length; x++){
+                data = allData[x];
+                tr = document.createElement("tr");
+                
+                    td = document.createElement("td");
+                    image = document.createElement("img");
+                    image.src = data.foto;
+                    image.setAttribute("width", "200");
+                    image.setAttribute("height", "150");
+                    td.appendChild(image);
+                    tr.appendChild(td);
+                    
+                    td = document.createElement("td");
+                    ced = data.cedula;
+                    td.innerHTML = ced;
+                    tr.appendChild(td);
+                        
+                    td = document.createElement("td");
+                    nom = data.nombre;
+                    td.innerHTML = nom;
+                    tr.appendChild(td);
+                        
+                    td = document.createElement("td");
+                    ap = data.apellido;
+                    td.innerHTML = ap;
+                    tr.appendChild(td);
+                        
+                    td = document.createElement("td");
+                    tel = data.telefono;
+                    td.innerHTML = tel;
+                    tr.appendChild(td);
+                
+                
+                button = document.createElement("button");
+                button.setAttribute("onclick", "actualizarDatos("+x+");");
+                button.innerHTML = "Actualizar"
+                
+                button1 = document.createElement("button");
+                button1.setAttribute("onclick","borrarDatos("+x+");");
+                button1.innerHTML = "Borrar";
+            }
+        padre.appendChild(tr);
+        
+        //Botones con ID correspondiente al arreglo
+        padre.lastChild.appendChild(button);
+        padre.lastChild.appendChild(button1);
+    }
+        
+        //Limpiar datos
+    function lim(){
+        d = document.getElementsByTagName("input");
+        for(x=0;x<d.length; x++){
+            d.item(x).value = "";
+        }
+    }
+        //Paso 1 para actualizar los datos. Sube los datos actuales a los input y crea el boton para actualizarlos en el arreglo
+    function actualizarDatos(id){
+        oldCed = allData[id].cedula;
+        oldName = allData[id].nombre;
+        oldLastName = allData[id].apellido;
+        oldTelephone = allData[id].telefono;
+        
+        document.getElementById("iCedula").value = oldCed;
+        document.getElementById("iNombre").value = oldName;
+        document.getElementById("iApellido").value = oldLastName;
+        document.getElementById("iTelefono").value = oldTelephone;
+        
+        button = document.createElement("button");
+        button.setAttribute("onclick", "actualizar("+id+");");
+        button.innerHTML = "Actualizar datos";
+        document.getElementById("topTable").lastChild.appendChild(button);
+    }
+        //Paso 2 para actualizar los datos. Actualiza en el arreglo y refresca la página
+    function actualizar(id){
+        newCed = document.getElementById("iCedula").value;
+        newName = document.getElementById("iNombre").value;
+        newLastName = document.getElementById("iApellido").value;
+        newTelephone = document.getElementById("iTelefono").value;
+        
+        allData[id].cedula = newCed;
+        allData[id].nombre = newName;
+        allData[id].apellido = newLastName;
+        allData[id].telefono = newTelephone;
+        
+        //Agregar al Local Storage
+        local = JSON.stringify(allData);
+        localStorage.setItem("datos", local);
+        
+        //Para eliminar el boton creado para actualizar, refresco la página
+        location.reload();
+        
+        //Para eliminar los datos de los input
+        lim();
+    }
+        
+        //Borrar datos
+    function borrarDatos(id){
+        allData.splice(id,1);
+        location.reload();
+        
+        //Agregar al Local Storage
+        local = JSON.stringify(allData);
+        localStorage.setItem("datos", local);
+    }
+        
+        //A partir de aquí aparecerá todo lo concerniente a la cámara
+    var video = document.getElementById("video");
+    var canvas = document.getElementById("canvas");
+    var context = canvas.getContext("2d");
+        
+        //Obtener acceso a la camara
+    function takePic(){
+            //Ésta funcion buscará si el navegador soporta el uso de los Media Devices
+        if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+            navigator.mediaDevices.getUserMedia({video:true}).then(function(stream){
+                video.src = window.URL.createObjectURL(stream);
+                video.play();
+            });
+        }
+        else if(navigator.getUserMedia){
+            navigator.getUserMedia({video:true}, function(stream){
+                video.src = stream;
+                video.play();
+            }, errBack);
+        }
+        else if(navigator.mozGetUserMedia){
+            navigator.mozGetUserMedia({video:true}, function(stream){
+                video.src = window.createObjectURL(stream);
+                video.play();
+            }, errBack);
+        }
+        else if(navigator.webkitGetUserMedia){
+            navigator.webkitGetUserMedia({video:true}, function(stream){
+                video.src = window.createObjectURL(stream);
+                video.play();
+            }, errBack);
+        }
+        
+        button = document.createElement("button");
+        button.innerHTML = "Capturar imagen";
+        button.addEventListener("click", function(){
+            context.drawImage(video, 0, 0, 640, 480);
+        });
+        
+        img = canvas.toDataURL();
+        div = document.getElementById("cameraFunctions");
+        div.appendChild(button);
+        
+    }
+        
+    //Revisar el Local Storage por informacion y mostrarla si hay
+    check = localStorage.getItem("datos");
+        if(check != null){
+            allData = JSON.parse(check);
+            b = document.getElementById("body");
+            b.setAttribute("onload", "showData();");
+        }
+    </script>
+</body>
+</html>
